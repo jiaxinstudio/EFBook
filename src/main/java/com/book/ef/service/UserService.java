@@ -5,6 +5,7 @@ import com.book.ef.entity.User;
 import com.book.ef.repository.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +34,7 @@ public class UserService {
         );
 
         return userRepository.findByUsername(username)
-                .orElseThrow();
+                .orElseThrow(() -> new UsernameNotFoundException(String.format("User with username %s not exist", username)));
     }
 
 

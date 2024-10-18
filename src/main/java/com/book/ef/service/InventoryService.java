@@ -1,9 +1,8 @@
 package com.book.ef.service;
 
-import com.book.ef.entity.Book;
 import com.book.ef.entity.Inventory;
+import com.book.ef.exception.InventoryNotFoundException;
 import com.book.ef.repository.InventoryRepository;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,7 +21,7 @@ public class InventoryService {
 
     public Inventory updateStock(Long bookId, Integer newStock) {
         Inventory inventory = inventoryRepository.findByBookId(bookId)
-                .orElseThrow(() -> new ResourceNotFoundException("Inventory not found for book ID: " + bookId));
+                .orElseThrow(() -> new InventoryNotFoundException("Inventory not found for book ID: " + bookId));
 
         inventory.setQuantity(newStock);
         return inventoryRepository.save(inventory);
@@ -30,7 +29,7 @@ public class InventoryService {
 
     public Integer getStockQuantity(Long bookId) {
         Inventory inventory = inventoryRepository.findByBookId(bookId)
-                .orElseThrow(() -> new ResourceNotFoundException("Inventory not found for book ID: " + bookId));
+                .orElseThrow(() -> new InventoryNotFoundException("Inventory not found for book ID: " + bookId));
 
         return inventory.getQuantity();
     }

@@ -1,11 +1,10 @@
 package com.book.ef.service;
 
-import com.book.ef.controller.InventoryController;
 import com.book.ef.dto.BookDto;
 import com.book.ef.entity.Book;
+import com.book.ef.exception.BookNotFoundException;
 import com.book.ef.repository.BookRepository;
 import com.book.ef.repository.InventoryRepository;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +26,7 @@ public class BookService {
     }
 
     public Book getBookById(Long id) {
-        return repository.findById(id).get();
+        return repository.findById(id).orElseThrow(() -> new BookNotFoundException(String.format("Book with id %s not found", id)));
     }
 
     public Book getBookByIsbn(String isbn) {
@@ -51,7 +50,7 @@ public class BookService {
     }
 
     public Book updateBook(Long id, BookDto bookDto) {
-        Book book = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Book not found for id: " + id));
+        Book book = repository.findById(id).orElseThrow(() -> new BookNotFoundException(String.format("Book with id %s not found", id)));
         Optional.ofNullable(bookDto.getTitle()).ifPresent(book::setTitle);
         Optional.ofNullable(bookDto.getAuthor()).ifPresent(book::setAuthor);
         Optional.ofNullable(bookDto.getIsbn()).ifPresent(book::setIsbn);
