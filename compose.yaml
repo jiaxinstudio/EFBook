@@ -1,0 +1,16 @@
+services:
+  mysql:
+    image: 'mysql:lts'
+    environment:
+      - 'MYSQL_DATABASE=book'
+      - 'MYSQL_PASSWORD=secret'
+      - 'MYSQL_ROOT_PASSWORD=verysecret'
+      - 'MYSQL_USER=myuser'
+    ports:
+      - '3306'
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+  redis:
+    image: 'redis:7.2.2'
+    ports:
+      - '6379'
