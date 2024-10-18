@@ -7,6 +7,7 @@ import com.book.ef.repository.BookRepository;
 import com.book.ef.repository.InventoryRepository;
 import com.book.ef.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -17,11 +18,16 @@ public class DataInitializer implements CommandLineRunner {
     private BookRepository bookRepository;
     private InventoryRepository inventoryRepository;
     private UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public DataInitializer(BookRepository bookRepository, InventoryRepository inventoryRepository, UserRepository userRepository) {
+    public DataInitializer(BookRepository bookRepository,
+                           InventoryRepository inventoryRepository,
+                           UserRepository userRepository,
+                           PasswordEncoder passwordEncoder) {
         this.bookRepository = bookRepository;
         this.inventoryRepository = inventoryRepository;
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -38,7 +44,7 @@ public class DataInitializer implements CommandLineRunner {
         inventoryRepository.save(new Inventory(null, book3, 300));
 
         if (!userRepository.findByUsername("admin").isPresent()) {
-            User admin = new User(null, "admin", "admin", "admin@admin.com", Set.of("ADMIN", "USER"));
+            User admin = new User(null, "admin", passwordEncoder.encode("admin"), "admin@admin.com", Set.of("ADMIN", "USER"));
             userRepository.save(admin);
         }
     }

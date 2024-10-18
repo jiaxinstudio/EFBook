@@ -4,6 +4,8 @@ import com.book.ef.entity.Book;
 import com.book.ef.entity.Order;
 import com.book.ef.entity.OrderStatus;
 import com.book.ef.entity.User;
+import com.book.ef.exception.BookNotFoundException;
+import com.book.ef.exception.UserNotFoundException;
 import com.book.ef.repository.BookRepository;
 import com.book.ef.repository.OrderRepository;
 import com.book.ef.repository.UserRepository;
@@ -28,9 +30,9 @@ public class OrderService {
     }
 
     @Transactional
-    public Order createOrder(Long bookId, int quantity) {
-        Book book = bookRepository.findById(bookId).orElseThrow(() -> new RuntimeException("Book not found"));
-        User user = userRepository.findById(1L).orElseThrow(() -> new RuntimeException("User not found"));
+    public Order createOrder(String userName, Long bookId, int quantity) {
+        Book book = bookRepository.findById(bookId).orElseThrow(() -> new BookNotFoundException("Book not found"));
+        User user = userRepository.findByUsername(userName).orElseThrow(() -> new UserNotFoundException("User not found"));
         Order order = Order.createOrder(book, quantity);
         order.setUser(user);
         orderRepository.save(order);
@@ -45,6 +47,9 @@ public class OrderService {
         Optional<Order> orderOpt = orderRepository.findById(orderId);
         if (orderOpt.isPresent()) {
             Order order = orderOpt.get();
+            if (order.getStatus() != OrderStatus.CREATED) {
+                return;
+            }
             order.cancelOrder();
             orderRepository.save(order);
 
