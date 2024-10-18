@@ -1,7 +1,9 @@
 package com.book.ef.controller;
 
+import com.book.ef.dto.BookDto;
 import com.book.ef.entity.Book;
 import com.book.ef.service.BookService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,26 +18,25 @@ public class BookController {
         this.bookService = bookService;
     }
 
-
-
     @GetMapping("list")
     public List<Book> getBooks() {
         return bookService.getBooks();
     }
 
     @PostMapping
-    public void save(@RequestBody Book book) {
-        bookService.save(book);
+    public ResponseEntity<Book> save(@RequestBody BookDto bookDto) {
+        Book book = bookService.save(bookDto);
+        return ResponseEntity.ok(book);
     }
 
     @GetMapping("/{id}")
-    public Book getBook(@PathVariable Long id) {
-        return bookService.getBookById(id);
+    public ResponseEntity<Book> getBook(@PathVariable Long id) {
+        return ResponseEntity.ok(bookService.getBookById(id));
     }
 
     @PutMapping("/{id}")
-    public Book updateBook(@PathVariable int id, @RequestBody Book book) {
-        return book;
+    public Book updateBook(@PathVariable Long id, @RequestBody BookDto bookDto) {
+        return bookService.updateBook(id, bookDto);
     }
 
     @DeleteMapping("/{id}")
