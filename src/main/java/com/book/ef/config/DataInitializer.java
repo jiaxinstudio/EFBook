@@ -2,21 +2,26 @@ package com.book.ef.config;
 
 import com.book.ef.entity.Book;
 import com.book.ef.entity.Inventory;
+import com.book.ef.entity.User;
 import com.book.ef.repository.BookRepository;
 import com.book.ef.repository.InventoryRepository;
+import com.book.ef.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
     private BookRepository bookRepository;
     private InventoryRepository inventoryRepository;
+    private UserRepository userRepository;
 
-    public DataInitializer(BookRepository bookRepository, InventoryRepository inventoryRepository) {
+    public DataInitializer(BookRepository bookRepository, InventoryRepository inventoryRepository, UserRepository userRepository) {
         this.bookRepository = bookRepository;
         this.inventoryRepository = inventoryRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -31,5 +36,10 @@ public class DataInitializer implements CommandLineRunner {
         inventoryRepository.save(new Inventory(null, book1, 100));
         inventoryRepository.save(new Inventory(null, book2, 200));
         inventoryRepository.save(new Inventory(null, book3, 300));
+
+        if (!userRepository.findByUsername("admin").isPresent()) {
+            User admin = new User(null, "admin", "admin", "admin@admin.com", Set.of("ADMIN", "USER"));
+            userRepository.save(admin);
+        }
     }
 }
